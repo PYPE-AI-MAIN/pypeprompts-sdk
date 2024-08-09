@@ -1,5 +1,5 @@
 class Config:
-    DEFAULT_DASHBOARD_URL = "http://localhost:3000/api/analytics"
+    DEFAULT_DASHBOARD_URL = "https://www.pypeai.com/api/analytics"
 
 
 config = Config()
