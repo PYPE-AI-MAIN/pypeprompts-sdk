@@ -5,7 +5,7 @@ import json
 import uuid
 import time
 from functools import wraps
-from .config import config
+from .config.config import config
 
 
 class AnalyticsItem(BaseModel):
