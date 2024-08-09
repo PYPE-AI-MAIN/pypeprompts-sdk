@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import Any, Dict, Optional
-from openai import OpenAI
 import requests
 import json
 import uuid
