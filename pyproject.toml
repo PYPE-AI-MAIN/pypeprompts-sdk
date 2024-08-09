@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "pypeprompts"
+version = "0.1.0"
+description = "A simple tracker for OpenAI API calls with built-in dashboard integration"
+authors = ["dhruv <dhruv@pypeai.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "pypeprompts"}]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+requests = "^2.25.1"
+python-dotenv = "^1.0.1"
+pydantic = "^2.8.2"
+responses = "^0.25.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+openai = "^1.40.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
