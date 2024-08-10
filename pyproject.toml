@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pypeprompts"
 version = "0.1.0"
-description = "A simple tracker for OpenAI API calls with built-in dashboard integration"
+description = "A simple tracker for OpenAI API calls for Pype App"
 authors = ["dhruv <dhruv@pypeai.com>"]
 license = "MIT"
 readme = "README.md"
