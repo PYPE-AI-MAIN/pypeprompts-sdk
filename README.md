@@ -21,13 +21,13 @@ A simple tracker for OpenAI API calls with built-in dashboard integration and un
 You can install the OpenAI Tracker using pip:
 
 ```bash
-pip install openai-tracker
+pip install pypeprompts
 ```
 
 Or if you're using Poetry:
 
 ```bash
-poetry add openai-tracker
+poetry add pypeprompts
 ```
 
 ## Usage
