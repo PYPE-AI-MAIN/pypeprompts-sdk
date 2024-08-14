@@ -1,14 +1,14 @@
 from pydantic import BaseModel, Field
-from typing import Any, Dict, Optional, Generator, AsyncGenerator
+from typing import Any, Dict, Optional, List
 import requests
 import json
 import uuid
 import time
 import asyncio
-from functools import wraps
-from .config.config import config
-import logging
 import aiohttp
+import logging
+from datetime import datetime
+from .config.config import config
 
 
 class AnalyticsItem(BaseModel):
@@ -21,191 +21,126 @@ class AnalyticsItem(BaseModel):
     output: str
     outputLength: int
     functionName: str
-    timestamp: Optional[str] = None
-    error: Optional[str] = None
-    custom_fields: Dict[str, Any] = Field(default_factory=dict)
+    tags: List[str] = Field(default_factory=list)
+
+
+class PromptAnalyticsError(Exception):
+    """Custom exception for PromptAnalyticsTracker errors"""
+
+    pass
 
 
 class PromptAnalyticsTracker:
     def __init__(
         self,
-        api_key: str,
+        project_token: str,
         enabled: bool = True,
     ):
+        if not project_token:
+            raise PromptAnalyticsError("project_token is required")
+
         self.instance_id = str(uuid.uuid4())
-        self.api_key = api_key
+        self.project_token = project_token
         self.dashboard_url = config.DEFAULT_DASHBOARD_URL
         self.enabled = enabled
-        self.custom_metadata: Dict[str, Any] = {}
 
-        # Set up logging
-        logging.basicConfig(level=logging.DEBUG)
         self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
 
-    def track_prompt(self, func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            if not self.enabled:
-                return func(*args, **kwargs)
+        fh = logging.FileHandler("prompt_analytics.log")
+        fh.setLevel(logging.DEBUG)
 
-            prompt_id = str(uuid.uuid4())
-            start_time = time.time()
-            try:
-                result = func(*args, **kwargs)
-                end_time = time.time()
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
 
-                if isinstance(result, Generator):
-                    return self._handle_sync_generator(
-                        prompt_id, start_time, func.__name__, args, kwargs, result
-                    )
-                elif asyncio.iscoroutine(result) or isinstance(result, AsyncGenerator):
-                    return self._handle_async_response(
-                        prompt_id, start_time, func.__name__, args, kwargs, result
-                    )
-                else:
-                    analytics = AnalyticsItem(
-                        instanceId=self.instance_id,
-                        promptId=prompt_id,
-                        name=func.__name__,
-                        processingTime=end_time - start_time,
-                        input=json.dumps({"args": args, "kwargs": kwargs}),
-                        inputLength=len(json.dumps({"args": args, "kwargs": kwargs})),
-                        output=json.dumps(result),
-                        outputLength=len(json.dumps(result)),
-                        functionName=func.__name__,
-                        custom_fields=self.custom_metadata,
-                    )
-                    self._send_analytics(analytics)
-                    return result
-            except Exception as e:
-                end_time = time.time()
-                self.logger.error(f"Error in tracked function: {e}")
-                analytics = AnalyticsItem(
-                    instanceId=self.instance_id,
-                    promptId=prompt_id,
-                    name=func.__name__,
-                    processingTime=end_time - start_time,
-                    input=json.dumps({"args": args, "kwargs": kwargs}),
-                    inputLength=len(json.dumps({"args": args, "kwargs": kwargs})),
-                    output="",
-                    outputLength=0,
-                    functionName=func.__name__,
-                    error=str(e),
-                    custom_fields=self.custom_metadata,
-                )
-                self._send_analytics(analytics)
-                raise
-
-        return wrapper
-
-    def __call__(self, label: str, prompt: str, output: Any, **kwargs):
-        if not self.enabled:
-            return output
-
-        prompt_id = str(
-            uuid.uuid4()
-        )  # Todo: Use this to correlate with prompt version in the project
-        start_time = time.time()
-
-        if asyncio.iscoroutine(output) or isinstance(output, AsyncGenerator):
-            return self._handle_async_response(
-                prompt_id, start_time, label, prompt, output, **kwargs
-            )
-        elif isinstance(output, Generator):
-            return self._handle_sync_generator(
-                prompt_id, start_time, label, prompt, output, **kwargs
-            )
-        else:
-            end_time = time.time()
-            analytics = AnalyticsItem(
-                instanceId=self.instance_id,
-                promptId=prompt_id,
-                name=label,
-                processingTime=end_time - start_time,
-                input=prompt,
-                inputLength=len(prompt),
-                output=json.dumps(output),
-                outputLength=len(json.dumps(output)),
-                functionName=kwargs.get("function_name", ""),
-                custom_fields={**self.custom_metadata, **kwargs},
-            )
-            self._send_analytics(analytics)
-            return output
-
-    def _handle_sync_generator(
-        self,
-        prompt_id: str,
-        start_time: float,
-        name: str,
-        prompt: str,
-        generator: Generator,
-        **kwargs,
-    ):
-        full_output = []
-        for chunk in generator:
-            full_output.append(chunk)
-            yield chunk
-
-        end_time = time.time()
-        analytics = AnalyticsItem(
-            instanceId=self.instance_id,
-            promptId=prompt_id,
-            name=name,
-            processingTime=end_time - start_time,
-            input=prompt,
-            inputLength=len(prompt),
-            output=json.dumps(full_output),
-            outputLength=len(json.dumps(full_output)),
-            functionName=kwargs.get("function_name", ""),
-            custom_fields={**self.custom_metadata, **kwargs},
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        self._send_analytics(analytics)
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
 
-    async def _handle_async_response(
-        self,
-        prompt_id: str,
-        start_time: float,
-        name: str,
-        prompt: str,
-        generator: AsyncGenerator,
-        **kwargs,
-    ):
-        full_output = []
-        async for chunk in generator:
-            full_output.append(chunk)
-            yield chunk
+        self.logger.addHandler(fh)
+        self.logger.addHandler(ch)
 
-        end_time = time.time()
-        analytics = AnalyticsItem(
-            instanceId=self.instance_id,
-            promptId=prompt_id,
-            name=name,
-            processingTime=end_time - start_time,
-            input=prompt,
-            inputLength=len(prompt),
-            output=json.dumps(full_output),
-            outputLength=len(json.dumps(full_output)),
-            functionName=kwargs.get("function_name", ""),
-            custom_fields={**self.custom_metadata, **kwargs},
+        self.logger.info(
+            f"PromptAnalyticsTracker initialized with project_token: {project_token}"
         )
-        await self._send_analytics_async(analytics)
 
-    def _send_analytics(self, analytics: AnalyticsItem):
+    def track(self, workflow_name: str, properties: Dict[str, Any]):
         if not self.enabled:
             self.logger.info("Analytics tracker is disabled. Skipping data submission.")
             return
 
+        try:
+            analytics = self._create_analytics_item(workflow_name, properties)
+            self._send_analytics(analytics)
+        except Exception as e:
+            self.logger.error(f"Error in track method: {str(e)}")
+            raise PromptAnalyticsError(f"Failed to track analytics: {str(e)}")
+
+    async def track_async(self, workflow_name: str, properties: Dict[str, Any]):
+        if not self.enabled:
+            self.logger.info("Analytics tracker is disabled. Skipping data submission.")
+            return
+
+        try:
+            analytics = self._create_analytics_item(workflow_name, properties)
+            await self._send_analytics_async(analytics)
+        except Exception as e:
+            self.logger.error(f"Error in track_async method: {str(e)}")
+            raise PromptAnalyticsError(
+                f"Failed to track analytics asynchronously: {str(e)}"
+            )
+
+    def _create_analytics_item(
+        self, workflow_name: str, properties: Dict[str, Any]
+    ) -> AnalyticsItem:
+        if not workflow_name:
+            raise PromptAnalyticsError("workflow_name is required")
+
+        prompt = properties.get("prompt", "")
+        output = properties.get("output", "")
+
+        if not prompt:
+            self.logger.warning("'prompt' is missing from properties")
+        if not output:
+            self.logger.warning("'output' is missing from properties")
+
+        try:
+            return AnalyticsItem(
+                instanceId=self.instance_id,
+                promptId=str(uuid.uuid4()),
+                name=workflow_name,
+                processingTime=properties.get("processingTime", 0.0),
+                input=prompt,
+                inputLength=len(prompt),
+                output=output,
+                outputLength=len(output),
+                functionName=properties.get("functionName", workflow_name),
+                tags=properties.get("tags", []),
+            )
+        except Exception as e:
+            self.logger.error(f"Error creating AnalyticsItem: {str(e)}")
+            raise PromptAnalyticsError(f"Failed to create AnalyticsItem: {str(e)}")
+
+    def _send_analytics(self, analytics: AnalyticsItem):
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self.project_token}",
         }
         try:
+            data = analytics.model_dump(exclude_none=True)
             self.logger.debug(f"Sending analytics data to {self.dashboard_url}")
+            self.logger.debug(f"Data being sent: {json.dumps(data, indent=2)}")
             response = requests.post(
-                self.dashboard_url, json=analytics.model_dump(), headers=headers
+                self.dashboard_url,
+                json=data,
+                headers=headers,
             )
             response.raise_for_status()
-            self.logger.info("Analytics data submitted successfully.")
+            self.logger.info(
+                f"Analytics data submitted successfully. Response: {response.text}"
+            )
         except requests.RequestException as e:
             self.logger.error(f"Failed to submit analytics data: {e}")
             self.logger.error(
@@ -214,31 +149,33 @@ class PromptAnalyticsTracker:
             self.logger.error(
                 f"Response content: {e.response.text if e.response else 'N/A'}"
             )
-            self.logger.error(f"Request URL: {self.dashboard_url}")
-            self.logger.error(f"Request headers: {headers}")
-            self.logger.error(
-                f"Request payload: {json.dumps(analytics.model_dump(), indent=2)}"
-            )
+            raise PromptAnalyticsError(f"Failed to submit analytics data: {str(e)}")
         except Exception as e:
             self.logger.error(f"Unexpected error when submitting analytics data: {e}")
+            raise PromptAnalyticsError(
+                f"Unexpected error when submitting analytics data: {str(e)}"
+            )
 
     async def _send_analytics_async(self, analytics: AnalyticsItem):
-        if not self.enabled:
-            self.logger.info("Analytics tracker is disabled. Skipping data submission.")
-            return
-
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self.project_token}",
         }
         try:
+            data = analytics.model_dump(exclude_none=True)
             self.logger.debug(f"Sending analytics data to {self.dashboard_url}")
+            self.logger.debug(f"Data being sent: {json.dumps(data, indent=2)}")
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    self.dashboard_url, json=analytics.model_dump(), headers=headers
+                    self.dashboard_url,
+                    json=data,
+                    headers=headers,
                 ) as response:
                     response.raise_for_status()
-                    self.logger.info("Analytics data submitted successfully.")
+                    response_text = await response.text()
+                    self.logger.info(
+                        f"Analytics data submitted successfully. Response: {response_text}"
+                    )
         except aiohttp.ClientError as e:
             self.logger.error(f"Failed to submit analytics data: {e}")
             self.logger.error(
@@ -247,13 +184,11 @@ class PromptAnalyticsTracker:
             self.logger.error(
                 f"Response content: {await e.text() if hasattr(e, 'text') else 'N/A'}"
             )
-            self.logger.error(f"Request URL: {self.dashboard_url}")
-            self.logger.error(f"Request headers: {headers}")
-            self.logger.error(
-                f"Request payload: {json.dumps(analytics.model_dump(), indent=2)}"
+            raise PromptAnalyticsError(
+                f"Failed to submit analytics data asynchronously: {str(e)}"
             )
         except Exception as e:
             self.logger.error(f"Unexpected error when submitting analytics data: {e}")
-
-    def add_metadata(self, key: str, value: Any):
-        self.custom_metadata[key] = value
+            raise PromptAnalyticsError(
+                f"Unexpected error when submitting analytics data asynchronously: {str(e)}"
+            )
