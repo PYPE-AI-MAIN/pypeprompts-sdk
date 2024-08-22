@@ -15,7 +15,7 @@ This package is designed to send data to Pype App, a SaaS application. By using 
 You can install `pypeprompts` using pip:
 
 ```bash
-pip install pypeprompts
+pip install --upgrade pypeprompts
 ```
 
 Or if you prefer using Poetry:
