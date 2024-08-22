@@ -159,6 +159,11 @@ def test_sync_tracking(tracker):
         "processingTime": 0.5,
         "functionName": "test_function",
         "tags": ["roadmap", "curriculum", "frontend"],
+        "attributes": {
+            "user_category": "Fresher",
+            "domain": "Frontend",
+            "slide_type": "MCQ",
+        },
     }
 
     try:

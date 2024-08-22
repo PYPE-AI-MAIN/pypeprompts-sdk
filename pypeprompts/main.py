@@ -22,6 +22,7 @@ class AnalyticsItem(BaseModel):
     outputLength: int
     functionName: str
     tags: List[str] = Field(default_factory=list)
+    attributes: Optional[Dict[str, Any]] = None
 
 
 class PromptAnalyticsError(Exception):
@@ -100,6 +101,7 @@ class PromptAnalyticsTracker:
 
         prompt = properties.get("prompt", "")
         output = properties.get("output", "")
+        attributes = properties.get("attributes")
 
         if not prompt:
             self.logger.warning("'prompt' is missing from properties")
@@ -107,7 +109,7 @@ class PromptAnalyticsTracker:
             self.logger.warning("'output' is missing from properties")
 
         try:
-            return AnalyticsItem(
+            analytics_item = AnalyticsItem(
                 instanceId=self.instance_id,
                 promptId=str(uuid.uuid4()),
                 name=workflow_name,
@@ -119,6 +121,11 @@ class PromptAnalyticsTracker:
                 functionName=properties.get("functionName", workflow_name),
                 tags=properties.get("tags", []),
             )
+
+            if attributes is not None:
+                analytics_item.attributes = attributes
+
+            return analytics_item
         except Exception as e:
             self.logger.error(f"Error creating AnalyticsItem: {str(e)}")
             raise PromptAnalyticsError(f"Failed to create AnalyticsItem: {str(e)}")

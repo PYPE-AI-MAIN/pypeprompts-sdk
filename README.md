@@ -1,140 +1,97 @@
-# OpenAI Tracker
+# pypeprompts
 
-[![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/downloads/)
-[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PyPI version](https://badge.fury.io/py/openai-tracker.svg)](https://badge.fury.io/py/openai-tracker)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/openai-tracker)](https://github.com/yourusername/openai-tracker/issues)
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/openai-tracker)](https://github.com/yourusername/openai-tracker/stargazers)
+[![PyPI version](https://badge.fury.io/py/pypeprompts.svg)](https://badge.fury.io/py/pypeprompts)
+[![Python Versions](https://img.shields.io/pypi/pyversions/pypeprompts.svg)](https://pypi.org/project/pypeprompts/)
+[![Downloads](https://pepy.tech/badge/pypeprompts)](https://pepy.tech/project/pypeprompts)
 
-A simple tracker for OpenAI API calls with built-in dashboard integration and unique instance tracking.
+A Python SDK for tracking and sending analytics data to Pype App.
 
-## Features
+## Important Notice
 
-- Easy integration with OpenAI API
-- Built-in dashboard for analytics
-- Unique instance tracking
-- Support for multiple trackers in a single application
+This package is designed to send data to Pype App, a SaaS application. By using this package, you agree to the terms of service of Pype App. Please ensure you have the necessary rights and permissions to send this data.
 
 ## Installation
 
-You can install the OpenAI Tracker using pip:
+You can install `pypeprompts` using pip:
 
 ```bash
 pip install pypeprompts
 ```
 
-Or if you're using Poetry:
+Or if you prefer using Poetry:
 
 ```bash
 poetry add pypeprompts
 ```
 
+## Requirements
+
+- Python 3.8.1 or higher
+
 ## Usage
 
-### Basic Usage
-
-For simple use cases where you want all tracked calls to share the same instance ID:
+Here's a quick example of how to use `pypeprompts`:
 
 ```python
-from openai import OpenAI
 from pypeprompts import PromptAnalyticsTracker
 
-client = OpenAI(api_key="your-api-key")
+# Initialize the tracker
+tracker = PromptAnalyticsTracker(project_token="your_project_token")
 
-# Initialize the PromptAnalyticsTracker
-tracker = PromptAnalyticsTracker(
-    name="OpenAI API Tracker",
-    api_key=analytics_api_key,
-)
+# Track an event
+tracker.track("workflow_name", {
+    "prompt": "Your input prompt",
+    "output": "Generated output",
+    "processingTime": 1.5,
+    "tags": ["tag1", "tag2"],
+    "attributes": {"key": "value"}
+})
 
-@tracker.track_prompt
-def generate_text(prompt: str) -> str:
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"Error calling OpenAI API: {e}")
-        return
+# Async tracking
+import asyncio
 
-# Use the function
-response = generate_text("Tell me a poem")
-print(response)
+async def async_track():
+    await tracker.track_async("async_workflow", {
+        "prompt": "Async input prompt",
+        "output": "Async generated output",
+        "processingTime": 0.8,
+        "tags": ["async", "example"],
+        "attributes": {"async_key": "async_value"}
+    })
+
+asyncio.run(async_track())
 ```
 
-### Advanced Usage
+## Features
 
-For cases where you want to track different parts of your application separately:
-
-```python
-from openai import OpenAI
-from pypeprompts import PromptAnalyticsTracker
-
-client = OpenAI(api_key="your-api-key")
-
-# Create separate trackers for different parts of your application
-user_tracker = PromptAnalyticsTracker(
-    name="User prompts tracker",
-    api_key=analytics_api_key,
-)
-admin_tracker = PromptAnalyticsTracker(
-    name="Admin prompts tracker",
-    api_key=analytics_api_key,
-)
-
-@user_tracker.track_prompt
-def user_generate_response(prompt):
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return completion.choices[0].message.content
-
-@admin_tracker.track_prompt
-def admin_generate_response(prompt):
-    completion = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "system", "content": prompt}]
-    )
-    return completion.choices[0].message.content
-
-# Use the functions
-user_response = user_generate_response("Tell me a joke")
-admin_response = admin_generate_response("Explain quantum computing")
-```
+- Simple API for tracking and sending analytics data to Pype App
+- Synchronous and asynchronous tracking methods
+- Customizable logging
+- Error handling and reporting
 
 ## Configuration
 
-Detailed configuration options and environment variables...
+You can configure the `PromptAnalyticsTracker` with the following parameters:
 
-## Dashboard
+- `project_token` (required): Your project token for authentication
+- `enabled` (optional): Set to `False` to disable tracking (default: `True`)
 
-Information about accessing and using the built-in dashboard...
+## Error Handling
 
-## Contributing
+The package uses a custom `PromptAnalyticsError` for error handling. Make sure to catch this exception in your code for proper error management.
 
-We welcome contributions to OpenAI Tracker! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
+## Logging
 
-## Testing
+`pypeprompts` uses Python's built-in `logging` module. Logs are written to both a file (`prompt_analytics.log`) and the console. You can adjust the log level as needed.
 
-To run the tests, use the following command:
+## Data Privacy and Security
 
-```bash
-poetry run pytest
-```
-
-## Changelog
-
-See the [CHANGELOG.md](CHANGELOG.md) file for details on what has changed.
+This package sends data to Pype App. Please ensure you comply with all applicable data protection laws and regulations when using this package. Do not send sensitive or personal information unless you have the necessary permissions and security measures in place.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is proprietary software. All rights reserved. You are granted a limited license to use this software in conjunction with Pype App services, subject to the terms of service of Pype App.
 
-## Acknowledgments
+## Support
 
-- OpenAI for their excellent API
-- Contributors who have helped to improve this project
+If you encounter any problems or have any questions, please open an issue on the GitHub repository or contact the author at dhruv@pypeai.com.
