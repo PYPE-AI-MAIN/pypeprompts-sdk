@@ -1,0 +1,135 @@
+2024-08-23 12:38:09,434 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:38:09,438 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:38:09,438 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:38:09,438 - pypeprompts.main - DEBUG - Sending analytics data to http://localhost:3000/api/analytics
+2024-08-23 12:38:09,438 - pypeprompts.main - DEBUG - Sending analytics data to http://localhost:3000/api/analytics
+2024-08-23 12:38:09,439 - pypeprompts.main - DEBUG - Data being sent: {
+  "instanceId": "bc2b53c5-8421-42c7-9be7-5bda9a67e3a1",
+  "promptId": "97d99869-dcbc-4427-8869-870e7d9c9db1",
+  "name": "saturn fact check",
+  "processingTime": 0.5,
+  "input": "[{'\\n            \"System: \\\\nYour task is to take a set of facts, ensure they fit a certain criteria, then return the facts in exactly the same format as the input, but with the criteria met. Make sure to NOT CHANGE THE FACT AT ALL, make as minimal changes as possible to meet the criteria.\\\\n\\\\n# Criteria 1: Every fact should only use the first name of the client, never anything else.\\\\n- The output facts should follow the following criteria: Every fact should only use the first name of the client, never anything else.\\\\n- The fact should not refer to the client as \\'the client\\', \\'He\\', \\'She\\', \\'Speaker B\\', .... It should refer to them as the first name.\\\\n- The fact may refer to other names (e.g. the partner\\'s name may be mentioned), ensure that these names are not changed.\\\\n\\\\n# Criteria 2: The fact should use British English\\\\n- The fact should use British English instead of American English or any other dialect.\\\\n- Ensure that the spelling, grammar, and punctuation are all in British English.\\\\n- For example, \\'color\\' should be changed to \\'colour\\', \\'center\\' should be changed to \\'centre\\', \\'realize\\' should be changed to \\'realise\\', etc.\\\\n\\\\n# Response Format\\\\n- The response should be in EXACTLY the same JSON format as the input.\\\\n- Ensure that you return ALL facts from the input. If you receive 1, return 1. If you receive 10, return 10. Do not change the number of facts in the response.\\\\n\\\\n\\\\nHuman: Here the facts for client Nikhil:\\\\n[{\\\\\"id\\\\\": 4, \\\\\"fact\\\\\": \\\\\"\\\\\\\\nHe has historically set aside money annually for holidays, vehicle expenses, and Christmas. He believes in financial stability and the reason he has\\\\\\\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\nHe can be confident that he has set aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\n\\\\\", \\\\\"first_name\\\\\": \\\\\"Nikhil\\\\\"\\n            '}]",
+  "inputLength": 1908,
+  "output": "{\"id\": 4, \"fact\": \"\\nNikhil has historically set aside money annually for holidays, vehicle expenses, and Christmas. Nikhil believes in financial stability and the reason Nikhil has\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\nNikhil can be confident that Nikhil has set aside money annually for holidays, vehicle expenses, and Christmas.\\n\", \"first_name\": \"Nikhil\"}",
+  "outputLength": 395,
+  "functionName": "fact_polishing",
+  "tags": [
+    "pronoun issue"
+  ],
+  "attributes": {
+    "user_category": "Fresher",
+    "domain": "Frontend",
+    "slide_type": "MCQ"
+  }
+}
+2024-08-23 12:38:09,439 - pypeprompts.main - DEBUG - Data being sent: {
+  "instanceId": "bc2b53c5-8421-42c7-9be7-5bda9a67e3a1",
+  "promptId": "97d99869-dcbc-4427-8869-870e7d9c9db1",
+  "name": "saturn fact check",
+  "processingTime": 0.5,
+  "input": "[{'\\n            \"System: \\\\nYour task is to take a set of facts, ensure they fit a certain criteria, then return the facts in exactly the same format as the input, but with the criteria met. Make sure to NOT CHANGE THE FACT AT ALL, make as minimal changes as possible to meet the criteria.\\\\n\\\\n# Criteria 1: Every fact should only use the first name of the client, never anything else.\\\\n- The output facts should follow the following criteria: Every fact should only use the first name of the client, never anything else.\\\\n- The fact should not refer to the client as \\'the client\\', \\'He\\', \\'She\\', \\'Speaker B\\', .... It should refer to them as the first name.\\\\n- The fact may refer to other names (e.g. the partner\\'s name may be mentioned), ensure that these names are not changed.\\\\n\\\\n# Criteria 2: The fact should use British English\\\\n- The fact should use British English instead of American English or any other dialect.\\\\n- Ensure that the spelling, grammar, and punctuation are all in British English.\\\\n- For example, \\'color\\' should be changed to \\'colour\\', \\'center\\' should be changed to \\'centre\\', \\'realize\\' should be changed to \\'realise\\', etc.\\\\n\\\\n# Response Format\\\\n- The response should be in EXACTLY the same JSON format as the input.\\\\n- Ensure that you return ALL facts from the input. If you receive 1, return 1. If you receive 10, return 10. Do not change the number of facts in the response.\\\\n\\\\n\\\\nHuman: Here the facts for client Nikhil:\\\\n[{\\\\\"id\\\\\": 4, \\\\\"fact\\\\\": \\\\\"\\\\\\\\nHe has historically set aside money annually for holidays, vehicle expenses, and Christmas. He believes in financial stability and the reason he has\\\\\\\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\nHe can be confident that he has set aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\n\\\\\", \\\\\"first_name\\\\\": \\\\\"Nikhil\\\\\"\\n            '}]",
+  "inputLength": 1908,
+  "output": "{\"id\": 4, \"fact\": \"\\nNikhil has historically set aside money annually for holidays, vehicle expenses, and Christmas. Nikhil believes in financial stability and the reason Nikhil has\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\nNikhil can be confident that Nikhil has set aside money annually for holidays, vehicle expenses, and Christmas.\\n\", \"first_name\": \"Nikhil\"}",
+  "outputLength": 395,
+  "functionName": "fact_polishing",
+  "tags": [
+    "pronoun issue"
+  ],
+  "attributes": {
+    "user_category": "Fresher",
+    "domain": "Frontend",
+    "slide_type": "MCQ"
+  }
+}
+2024-08-23 12:38:12,337 - pypeprompts.main - INFO - Analytics data submitted successfully. Response: {"message":"Analytics data saved successfully"}
+2024-08-23 12:38:12,337 - pypeprompts.main - INFO - Analytics data submitted successfully. Response: {"message":"Analytics data saved successfully"}
+2024-08-23 12:41:57,031 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:41:57,035 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:41:57,035 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:41:57,035 - pypeprompts.main - DEBUG - Sending analytics data to http://localhost:3000/api/analytics
+2024-08-23 12:41:57,035 - pypeprompts.main - DEBUG - Sending analytics data to http://localhost:3000/api/analytics
+2024-08-23 12:41:57,035 - pypeprompts.main - DEBUG - Data being sent: {
+  "instanceId": "c278a3a7-a006-4813-abb2-417d750248ee",
+  "promptId": "63fe2745-b441-478a-a3af-fe5a6ef9d7f5",
+  "name": "saturn fact check",
+  "processingTime": 0.5,
+  "input": "[{'\\n            \"System: \\\\nYour task is to take a set of facts, ensure they fit a certain criteria, then return the facts in exactly the same format as the input, but with the criteria met. Make sure to NOT CHANGE THE FACT AT ALL, make as minimal changes as possible to meet the criteria.\\\\n\\\\n# Criteria 1: Every fact should only use the first name of the client, never anything else.\\\\n- The output facts should follow the following criteria: Every fact should only use the first name of the client, never anything else.\\\\n- The fact should not refer to the client as \\'the client\\', \\'He\\', \\'She\\', \\'Speaker B\\', .... It should refer to them as the first name.\\\\n- The fact may refer to other names (e.g. the partner\\'s name may be mentioned), ensure that these names are not changed.\\\\n\\\\n# Criteria 2: The fact should use British English\\\\n- The fact should use British English instead of American English or any other dialect.\\\\n- Ensure that the spelling, grammar, and punctuation are all in British English.\\\\n- For example, \\'color\\' should be changed to \\'colour\\', \\'center\\' should be changed to \\'centre\\', \\'realize\\' should be changed to \\'realise\\', etc.\\\\n\\\\n# Response Format\\\\n- The response should be in EXACTLY the same JSON format as the input.\\\\n- Ensure that you return ALL facts from the input. If you receive 1, return 1. If you receive 10, return 10. Do not change the number of facts in the response.\\\\n\\\\n\\\\nHuman: Here the facts for client Nikhil:\\\\n[{\\\\\"id\\\\\": 4, \\\\\"fact\\\\\": \\\\\"\\\\\\\\nHe has historically set aside money annually for holidays, vehicle expenses, and Christmas. He believes in financial stability and the reason he has\\\\\\\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\nHe can be confident that he has set aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\n\\\\\", \\\\\"first_name\\\\\": \\\\\"Nikhil\\\\\"\\n            '}]",
+  "inputLength": 1908,
+  "output": "{\"id\": 4, \"fact\": \"\\nNikhil has historically set aside money annually for holidays, vehicle expenses, and Christmas. Nikhil believes in financial stability and the reason Nikhil has\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\nNikhil can be confident that Nikhil has set aside money annually for holidays, vehicle expenses, and Christmas.\\n\", \"first_name\": \"Nikhil\"}",
+  "outputLength": 395,
+  "functionName": "fact_polishing",
+  "tags": [
+    "pronoun issue"
+  ],
+  "attributes": {
+    "user_category": "Fresher",
+    "domain": "Frontend",
+    "slide_type": "MCQ"
+  }
+}
+2024-08-23 12:41:57,035 - pypeprompts.main - DEBUG - Data being sent: {
+  "instanceId": "c278a3a7-a006-4813-abb2-417d750248ee",
+  "promptId": "63fe2745-b441-478a-a3af-fe5a6ef9d7f5",
+  "name": "saturn fact check",
+  "processingTime": 0.5,
+  "input": "[{'\\n            \"System: \\\\nYour task is to take a set of facts, ensure they fit a certain criteria, then return the facts in exactly the same format as the input, but with the criteria met. Make sure to NOT CHANGE THE FACT AT ALL, make as minimal changes as possible to meet the criteria.\\\\n\\\\n# Criteria 1: Every fact should only use the first name of the client, never anything else.\\\\n- The output facts should follow the following criteria: Every fact should only use the first name of the client, never anything else.\\\\n- The fact should not refer to the client as \\'the client\\', \\'He\\', \\'She\\', \\'Speaker B\\', .... It should refer to them as the first name.\\\\n- The fact may refer to other names (e.g. the partner\\'s name may be mentioned), ensure that these names are not changed.\\\\n\\\\n# Criteria 2: The fact should use British English\\\\n- The fact should use British English instead of American English or any other dialect.\\\\n- Ensure that the spelling, grammar, and punctuation are all in British English.\\\\n- For example, \\'color\\' should be changed to \\'colour\\', \\'center\\' should be changed to \\'centre\\', \\'realize\\' should be changed to \\'realise\\', etc.\\\\n\\\\n# Response Format\\\\n- The response should be in EXACTLY the same JSON format as the input.\\\\n- Ensure that you return ALL facts from the input. If you receive 1, return 1. If you receive 10, return 10. Do not change the number of facts in the response.\\\\n\\\\n\\\\nHuman: Here the facts for client Nikhil:\\\\n[{\\\\\"id\\\\\": 4, \\\\\"fact\\\\\": \\\\\"\\\\\\\\nHe has historically set aside money annually for holidays, vehicle expenses, and Christmas. He believes in financial stability and the reason he has\\\\\\\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\nHe can be confident that he has set aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\n\\\\\", \\\\\"first_name\\\\\": \\\\\"Nikhil\\\\\"\\n            '}]",
+  "inputLength": 1908,
+  "output": "{\"id\": 4, \"fact\": \"\\nNikhil has historically set aside money annually for holidays, vehicle expenses, and Christmas. Nikhil believes in financial stability and the reason Nikhil has\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\nNikhil can be confident that Nikhil has set aside money annually for holidays, vehicle expenses, and Christmas.\\n\", \"first_name\": \"Nikhil\"}",
+  "outputLength": 395,
+  "functionName": "fact_polishing",
+  "tags": [
+    "pronoun issue"
+  ],
+  "attributes": {
+    "user_category": "Fresher",
+    "domain": "Frontend",
+    "slide_type": "MCQ"
+  }
+}
+2024-08-23 12:41:57,416 - pypeprompts.main - INFO - Analytics data submitted successfully. Response: {"message":"Analytics data saved successfully"}
+2024-08-23 12:41:57,416 - pypeprompts.main - INFO - Analytics data submitted successfully. Response: {"message":"Analytics data saved successfully"}
+2024-08-23 12:42:18,684 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:42:18,686 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:42:18,686 - pypeprompts.main - INFO - PromptAnalyticsTracker initialized with project_token: c48715ccdaf118da861a4f543d197a8548c0787cad32d5bbb1ceeae8de7190d9
+2024-08-23 12:42:18,686 - pypeprompts.main - DEBUG - Sending analytics data to http://localhost:3000/api/analytics
+2024-08-23 12:42:18,686 - pypeprompts.main - DEBUG - Sending analytics data to http://localhost:3000/api/analytics
+2024-08-23 12:42:18,687 - pypeprompts.main - DEBUG - Data being sent: {
+  "instanceId": "e832b660-1177-436a-867e-a03c517cedc8",
+  "promptId": "8694f2d4-1746-4500-bdfe-c7d899e13dfb",
+  "name": "saturn fact check",
+  "processingTime": 0.5,
+  "input": "[{'\\n            \"System: \\\\nYour task is to take a set of facts, ensure they fit a certain criteria, then return the facts in exactly the same format as the input, but with the criteria met. Make sure to NOT CHANGE THE FACT AT ALL, make as minimal changes as possible to meet the criteria.\\\\n\\\\n# Criteria 1: Every fact should only use the first name of the client, never anything else.\\\\n- The output facts should follow the following criteria: Every fact should only use the first name of the client, never anything else.\\\\n- The fact should not refer to the client as \\'the client\\', \\'He\\', \\'She\\', \\'Speaker B\\', .... It should refer to them as the first name.\\\\n- The fact may refer to other names (e.g. the partner\\'s name may be mentioned), ensure that these names are not changed.\\\\n\\\\n# Criteria 2: The fact should use British English\\\\n- The fact should use British English instead of American English or any other dialect.\\\\n- Ensure that the spelling, grammar, and punctuation are all in British English.\\\\n- For example, \\'color\\' should be changed to \\'colour\\', \\'center\\' should be changed to \\'centre\\', \\'realize\\' should be changed to \\'realise\\', etc.\\\\n\\\\n# Response Format\\\\n- The response should be in EXACTLY the same JSON format as the input.\\\\n- Ensure that you return ALL facts from the input. If you receive 1, return 1. If you receive 10, return 10. Do not change the number of facts in the response.\\\\n\\\\n\\\\nHuman: Here the facts for client Nikhil:\\\\n[{\\\\\"id\\\\\": 4, \\\\\"fact\\\\\": \\\\\"\\\\\\\\nHe has historically set aside money annually for holidays, vehicle expenses, and Christmas. He believes in financial stability and the reason he has\\\\\\\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\nHe can be confident that he has set aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\n\\\\\", \\\\\"first_name\\\\\": \\\\\"Nikhil\\\\\"\\n            '}]",
+  "inputLength": 1908,
+  "output": "{\"id\": 4, \"fact\": \"\\nNikhil has historically set aside money annually for holidays, vehicle expenses, and Christmas. Nikhil believes in financial stability and the reason Nikhil has\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\nNikhil can be confident that Nikhil has set aside money annually for holidays, vehicle expenses, and Christmas.\\n\", \"first_name\": \"Nikhil\"}",
+  "outputLength": 395,
+  "functionName": "fact_polishing",
+  "tags": [
+    "pronoun issue"
+  ],
+  "attributes": {
+    "user_category": "Fresher",
+    "domain": "Frontend",
+    "slide_type": "MCQ"
+  }
+}
+2024-08-23 12:42:18,687 - pypeprompts.main - DEBUG - Data being sent: {
+  "instanceId": "e832b660-1177-436a-867e-a03c517cedc8",
+  "promptId": "8694f2d4-1746-4500-bdfe-c7d899e13dfb",
+  "name": "saturn fact check",
+  "processingTime": 0.5,
+  "input": "[{'\\n            \"System: \\\\nYour task is to take a set of facts, ensure they fit a certain criteria, then return the facts in exactly the same format as the input, but with the criteria met. Make sure to NOT CHANGE THE FACT AT ALL, make as minimal changes as possible to meet the criteria.\\\\n\\\\n# Criteria 1: Every fact should only use the first name of the client, never anything else.\\\\n- The output facts should follow the following criteria: Every fact should only use the first name of the client, never anything else.\\\\n- The fact should not refer to the client as \\'the client\\', \\'He\\', \\'She\\', \\'Speaker B\\', .... It should refer to them as the first name.\\\\n- The fact may refer to other names (e.g. the partner\\'s name may be mentioned), ensure that these names are not changed.\\\\n\\\\n# Criteria 2: The fact should use British English\\\\n- The fact should use British English instead of American English or any other dialect.\\\\n- Ensure that the spelling, grammar, and punctuation are all in British English.\\\\n- For example, \\'color\\' should be changed to \\'colour\\', \\'center\\' should be changed to \\'centre\\', \\'realize\\' should be changed to \\'realise\\', etc.\\\\n\\\\n# Response Format\\\\n- The response should be in EXACTLY the same JSON format as the input.\\\\n- Ensure that you return ALL facts from the input. If you receive 1, return 1. If you receive 10, return 10. Do not change the number of facts in the response.\\\\n\\\\n\\\\nHuman: Here the facts for client Nikhil:\\\\n[{\\\\\"id\\\\\": 4, \\\\\"fact\\\\\": \\\\\"\\\\\\\\nHe has historically set aside money annually for holidays, vehicle expenses, and Christmas. He believes in financial stability and the reason he has\\\\\\\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\nHe can be confident that he has set aside money annually for holidays, vehicle expenses, and Christmas.\\\\\\\\n\\\\\", \\\\\"first_name\\\\\": \\\\\"Nikhil\\\\\"\\n            '}]",
+  "inputLength": 1908,
+  "output": "{\"id\": 4, \"fact\": \"\\nNikhil has historically set aside money annually for holidays, vehicle expenses, and Christmas. Nikhil believes in financial stability and the reason Nikhil has\\nset aside money annually for holidays, vehicle expenses, and Christmas.\\nNikhil can be confident that Nikhil has set aside money annually for holidays, vehicle expenses, and Christmas.\\n\", \"first_name\": \"Nikhil\"}",
+  "outputLength": 395,
+  "functionName": "fact_polishing",
+  "tags": [
+    "pronoun issue"
+  ],
+  "attributes": {
+    "user_category": "Fresher",
+    "domain": "Frontend",
+    "slide_type": "MCQ"
+  }
+}
+2024-08-23 12:42:18,824 - pypeprompts.main - INFO - Analytics data submitted successfully. Response: {"message":"Analytics data saved successfully"}
+2024-08-23 12:42:18,824 - pypeprompts.main - INFO - Analytics data submitted successfully. Response: {"message":"Analytics data saved successfully"}

@@ -55,7 +55,8 @@ def test_sync_tracking(tracker):
     }
 
     try:
-        tracker.track(workflow_name, properties)
+        id = tracker.track(workflow_name, properties)
+        print("Prompt Id:", id)
         # If no exception is raised, the test passes
         assert True
     except PromptAnalyticsError as e:

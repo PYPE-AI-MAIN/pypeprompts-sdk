@@ -28,6 +28,16 @@ poetry add pypeprompts
 
 - Python 3.8.1 or higher
 
+## Obtaining Your Project Token
+
+To use `pypeprompts`, you'll need a project token. This token is used to authenticate your requests and associate the analytics data with your account. You can obtain your project token by following these steps:
+
+1. Visit [pypeai.com](https://www.pypeai.com) and log in to your account.
+2. Create a project.
+3. Click on Publish to generate the token.
+
+If you encounter any issues or need assistance obtaining your project token, please contact dhruv@pypeai.com
+
 ## Usage
 
 Here's a quick example of how to use `pypeprompts`:
@@ -35,29 +45,31 @@ Here's a quick example of how to use `pypeprompts`:
 ```python
 from pypeprompts import PromptAnalyticsTracker
 
-# Initialize the tracker
+# Initialize the tracker with your project token from pypeai.com
 tracker = PromptAnalyticsTracker(project_token="your_project_token")
 
-# Track an event
-tracker.track("workflow_name", {
+# Track an event and get the promptId
+prompt_id = tracker.track("workflow_name", {
     "prompt": "Your input prompt",
     "output": "Generated output",
     "processingTime": 1.5,
     "tags": ["tag1", "tag2"],
     "attributes": {"key": "value"}
 })
+print(f"Prompt ID: {prompt_id}")
 
 # Async tracking
 import asyncio
 
 async def async_track():
-    await tracker.track_async("async_workflow", {
+    prompt_id = await tracker.track_async("async_workflow", {
         "prompt": "Async input prompt",
         "output": "Async generated output",
         "processingTime": 0.8,
         "tags": ["async", "example"],
         "attributes": {"async_key": "async_value"}
     })
+    print(f"Async Prompt ID: {prompt_id}")
 
 asyncio.run(async_track())
 ```
@@ -66,6 +78,7 @@ asyncio.run(async_track())
 
 - Simple API for tracking and sending analytics data to Pype App
 - Synchronous and asynchronous tracking methods
+- Returns a unique `promptId` for each tracked event
 - Customizable logging
 - Error handling and reporting
 
@@ -73,7 +86,7 @@ asyncio.run(async_track())
 
 You can configure the `PromptAnalyticsTracker` with the following parameters:
 
-- `project_token` (required): Your project token for authentication
+- `project_token` (required): Your project token for authentication (obtained from pypeai.com)
 - `enabled` (optional): Set to `False` to disable tracking (default: `True`)
 
 ## Error Handling

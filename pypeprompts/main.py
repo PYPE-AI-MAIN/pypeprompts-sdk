@@ -63,9 +63,7 @@ class PromptAnalyticsTracker:
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
-        self.logger.info(
-            f"PromptAnalyticsTracker initialized with project_token: {project_token}"
-        )
+        self.logger.info(f"PromptAnalyticsTracker initialized with project_token")
 
     def track(self, workflow_name: str, properties: Dict[str, Any]):
         if not self.enabled:
@@ -75,6 +73,7 @@ class PromptAnalyticsTracker:
         try:
             analytics = self._create_analytics_item(workflow_name, properties)
             self._send_analytics(analytics)
+            return analytics.promptId
         except Exception as e:
             self.logger.error(f"Error in track method: {str(e)}")
             raise PromptAnalyticsError(f"Failed to track analytics: {str(e)}")
@@ -87,6 +86,7 @@ class PromptAnalyticsTracker:
         try:
             analytics = self._create_analytics_item(workflow_name, properties)
             await self._send_analytics_async(analytics)
+            return analytics.promptId
         except Exception as e:
             self.logger.error(f"Error in track_async method: {str(e)}")
             raise PromptAnalyticsError(
