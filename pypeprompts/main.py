@@ -108,6 +108,10 @@ class PromptAnalyticsTracker:
         if not output:
             self.logger.warning("'output' is missing from properties")
 
+        # Convert sets to lists in attributes, if present
+        if attributes:
+            attributes = self._convert_sets_to_lists(attributes)
+
         try:
             analytics_item = AnalyticsItem(
                 instanceId=self.instance_id,
@@ -129,6 +133,16 @@ class PromptAnalyticsTracker:
         except Exception as e:
             self.logger.error(f"Error creating AnalyticsItem: {str(e)}")
             raise PromptAnalyticsError(f"Failed to create AnalyticsItem: {str(e)}")
+
+    def _convert_sets_to_lists(self, obj):
+        if isinstance(obj, dict):
+            return {k: self._convert_sets_to_lists(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_sets_to_lists(elem) for elem in obj]
+        elif isinstance(obj, set):
+            return list(obj)
+        else:
+            return obj
 
     def _send_analytics(self, analytics: AnalyticsItem):
         headers = {
