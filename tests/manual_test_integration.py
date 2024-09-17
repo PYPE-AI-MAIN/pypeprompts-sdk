@@ -5,10 +5,9 @@ from dotenv import load_dotenv
 from pypeprompts import PromptAnalyticsTracker, PromptAnalyticsError
 
 # Load environment variables
-load_dotenv()
+load_dotenv(override=True)
 
-# PROJECT_TOKEN = os.getenv("PROJECT_TOKEN")
-PROJECT_TOKEN = "aa534570d07fd3f99885f698097a3ede1b9b2fac3059d2c936a6f79d279e9e00"
+PROJECT_TOKEN = os.getenv("PROJECT_TOKEN")
 DASHBOARD_URL = os.getenv("DASHBOARD_URL", "http://localhost:3000/api/analytics")
 
 

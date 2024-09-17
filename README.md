@@ -12,6 +12,8 @@ This package is designed to send data to Pype App, a SaaS application. By using 
 
 ## Installation
 
+### For Production Use (PyPI Package)
+
 You can install `pypeprompts` using pip:
 
 ```bash
@@ -23,6 +25,18 @@ Or if you prefer using Poetry:
 ```bash
 poetry add pypeprompts
 ```
+
+### For Development Use
+
+If you're developing or contributing to `pypeprompts`, clone the repository and install it in editable mode:
+
+```bash
+git clone https://github.com/yourusername/pypeprompts.git
+cd pypeprompts
+poetry install
+```
+
+This will install the package in editable mode, allowing you to make changes to the code and immediately see the effects without reinstalling.
 
 ## Requirements
 
@@ -74,6 +88,33 @@ async def async_track():
 asyncio.run(async_track())
 ```
 
+## Development Server Usage
+
+When using `pypeprompts` in a development environment:
+
+1. Set up environment variables:
+
+   ```bash
+   export PYPE_PROJECT_TOKEN=your_development_token
+   export PYPE_ENV=development
+   ```
+
+2. In your development code:
+
+   ```python
+   import os
+   from pypeprompts import PromptAnalyticsTracker
+
+   tracker = PromptAnalyticsTracker(
+       project_token=os.getenv('PYPE_PROJECT_TOKEN'),
+       enabled=os.getenv('PYPE_ENV') == 'development'
+   )
+
+   # Use tracker as normal...
+   ```
+
+This setup allows you to easily switch between development and production environments by changing the `PYPE_ENV` variable.
+
 ## Features
 
 - Simple API for tracking and sending analytics data to Pype App
@@ -81,6 +122,7 @@ asyncio.run(async_track())
 - Returns a unique `promptId` for each tracked event
 - Customizable logging
 - Error handling and reporting
+- Development mode for testing without affecting production data
 
 ## Configuration
 
@@ -100,6 +142,10 @@ The package uses a custom `PromptAnalyticsError` for error handling. Make sure t
 ## Data Privacy and Security
 
 This package sends data to Pype App. Please ensure you comply with all applicable data protection laws and regulations when using this package. Do not send sensitive or personal information unless you have the necessary permissions and security measures in place.
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details on how to get started.
 
 ## License
 
