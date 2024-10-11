@@ -9,7 +9,27 @@ import aiohttp
 import logging
 from datetime import datetime
 from .config.config import config
+import boto3
+from dotenv import load_dotenv
+import os
+from pathlib import Path
 
+
+
+env_path = Path('../') / '.env'
+load_dotenv(dotenv_path=env_path)
+
+
+aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+region_name = os.getenv("REGION_NAME")
+
+print(aws_access_key_id)
+
+dynamodb_client = boto3.client('dynamodb', 
+                      aws_access_key_id=aws_access_key_id,
+                      aws_secret_access_key=aws_secret_access_key,
+                      region_name=region_name)
 
 class AnalyticsItem(BaseModel):
     instanceId: str
@@ -213,3 +233,52 @@ class PromptAnalyticsTracker:
             raise PromptAnalyticsError(
                 f"Unexpected error when submitting analytics data asynchronously: {str(e)}"
             )
+            
+    def accessPromptVersions(self, version=None):
+        
+        api_keys_table = os.getenv("DYNAMODB_API_KEYS_TABLE")
+        prompt_versions_table = os.getenv("DYNAMODB_PROMPT_VERSIONS_TABLE")
+        
+        response = dynamodb_client.get_item(
+            TableName=api_keys_table,
+            Key={
+                'apiKey': {
+                    'S': self.project_token
+                }
+            },
+            ProjectionExpression='projectId',
+        )
+
+        if 'Item' in response:
+            projectId = response['Item']['projectId']['S']
+
+            promptText = dynamodb_client.query(
+                TableName=prompt_versions_table,
+                KeyConditionExpression='projectId = :projectId',
+                ExpressionAttributeValues={
+                    ':projectId': {'S': projectId}
+                },
+                ProjectionExpression='promptText, versionNumber'
+            )
+
+            result = {item['versionNumber']['S']: item['promptText']['S'] for item in promptText["Items"]}
+
+            if version is not None:
+                version_str = str(version)  
+                if version_str in result:
+                    return result[version_str]
+                else:
+                    print(f"Version {version_str} not found.")
+                    return ""
+            else:
+                if result:
+                    latest_version = max(result.keys(), key=int)  
+                    return result[latest_version]
+                else:
+                    print("No prompt versions found!")
+                    return ""
+        else:
+            print("No projects are found!")
+            return {}
+
+
