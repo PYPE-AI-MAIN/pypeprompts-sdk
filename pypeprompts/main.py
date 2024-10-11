@@ -9,27 +9,9 @@ import aiohttp
 import logging
 from datetime import datetime
 from .config.config import config
-import boto3
-from dotenv import load_dotenv
-import os
-from pathlib import Path
 
 
 
-env_path = Path('../') / '.env'
-load_dotenv(dotenv_path=env_path)
-
-
-aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
-aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-region_name = os.getenv("REGION_NAME")
-
-print(aws_access_key_id)
-
-dynamodb_client = boto3.client('dynamodb', 
-                      aws_access_key_id=aws_access_key_id,
-                      aws_secret_access_key=aws_secret_access_key,
-                      region_name=region_name)
 
 class AnalyticsItem(BaseModel):
     instanceId: str
@@ -63,6 +45,7 @@ class PromptAnalyticsTracker:
         self.instance_id = str(uuid.uuid4())
         self.project_token = project_token
         self.dashboard_url = config.DEFAULT_DASHBOARD_URL
+        self.prompt_version_url = config.DEFAULT_PROMPT_VERSIONS_URL
         self.enabled = enabled
 
         self.logger = logging.getLogger(__name__)
@@ -235,50 +218,50 @@ class PromptAnalyticsTracker:
             )
             
     def accessPromptVersions(self, version=None):
+        return asyncio.run(self._async_access_prompt_versions(version))
+
+    async def _async_access_prompt_versions(self, version=None):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.project_token}",
+        }
         
-        api_keys_table = os.getenv("DYNAMODB_API_KEYS_TABLE")
-        prompt_versions_table = os.getenv("DYNAMODB_PROMPT_VERSIONS_TABLE")
-        
-        response = dynamodb_client.get_item(
-            TableName=api_keys_table,
-            Key={
-                'apiKey': {
-                    'S': self.project_token
-                }
-            },
-            ProjectionExpression='projectId',
-        )
+        try:
+            self.logger.debug(f"Request URL: {self.prompt_version_url}")
+            self.logger.debug(f"Headers: {json.dumps(headers, indent=2)}")
 
-        if 'Item' in response:
-            projectId = response['Item']['projectId']['S']
+            async with aiohttp.ClientSession() as session:
+                async with session.get(self.prompt_version_url, headers=headers) as response:
+                    response.raise_for_status()  # Raise exception for bad responses (4XX or 5XX)
+                    self.logger.info(f"Prompt versions fetched successfully.")
+                    
+                    response_json = await response.json()  # Await the response
 
-            promptText = dynamodb_client.query(
-                TableName=prompt_versions_table,
-                KeyConditionExpression='projectId = :projectId',
-                ExpressionAttributeValues={
-                    ':projectId': {'S': projectId}
-                },
-                ProjectionExpression='promptText, versionNumber'
-            )
+                    if 'promptVersions' in response_json:
+                            result = {item['versionNumber']: item['promptText'] for item in response_json["promptVersions"]}
+                            if version is not None:
+                                version_str = str(version)  
+                                
+                                if version_str in result:
+                                    return result[version_str]
+                                else:
+                                    print(f"Version {version_str} not found.")
+                                    return ""
+                            else:
+                                if result:
+                                    latest_version = max(result.keys(), key=int)  
+                                    return result[latest_version]
+                                else:
+                                    print("No prompt versions found!")
+                                    return ""
+                    else:
+                        print("No projects found!")
+                        return {}
 
-            result = {item['versionNumber']['S']: item['promptText']['S'] for item in promptText["Items"]}
+        except aiohttp.ClientError as e:
+            self.logger.error(f"Failed to fetch prompt versions: {e}")
+            raise Exception(f"Failed to fetch prompt versions: {str(e)}")
 
-            if version is not None:
-                version_str = str(version)  
-                if version_str in result:
-                    return result[version_str]
-                else:
-                    print(f"Version {version_str} not found.")
-                    return ""
-            else:
-                if result:
-                    latest_version = max(result.keys(), key=int)  
-                    return result[latest_version]
-                else:
-                    print("No prompt versions found!")
-                    return ""
-        else:
-            print("No projects are found!")
-            return {}
-
-
+        except Exception as e:
+            self.logger.error(f"Unexpected error while fetching prompt versions: {e}")
+            raise Exception(f"Unexpected error while fetching prompt versions: {str(e)}")

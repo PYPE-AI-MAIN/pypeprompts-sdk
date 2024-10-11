@@ -16,7 +16,7 @@ class TestPromptAnalyticsTracker(unittest.TestCase):
         # Initialize the tracker with a fake project token
         tracker = PromptAnalyticsTracker(project_token="af0b66396840722a2988b2b2e7a57aa10f8802caffbfc673ca2b9118676ed600")
 
-        prompt_text = tracker.accessPromptVersions(version=6)
+        prompt_text = tracker.accessPromptVersions()
         print(prompt_text)
         # Prepare test data
         workflow_name = "test_workflow"
