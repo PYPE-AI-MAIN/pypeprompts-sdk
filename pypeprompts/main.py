@@ -232,7 +232,7 @@ class PromptAnalyticsTracker:
 
             async with aiohttp.ClientSession() as session:
                 async with session.get(self.prompt_version_url, headers=headers) as response:
-                    response.raise_for_status()  # Raise exception for bad responses (4XX or 5XX)
+                    response.raise_for_status()  
                     self.logger.info(f"Prompt versions fetched successfully.")
                     
                     response_json = await response.json()  # Await the response

@@ -14,7 +14,7 @@ class TestPromptAnalyticsTracker(unittest.TestCase):
         mock_post.return_value = mock_response
 
         # Initialize the tracker with a fake project token
-        tracker = PromptAnalyticsTracker(project_token="af0b66396840722a2988b2b2e7a57aa10f8802caffbfc673ca2b9118676ed600")
+        tracker = PromptAnalyticsTracker(project_token="a6f852e77cf6647fb34395d5f579a8f1fe60b5af48bb10a86cbdcdb8b01c6e79")
 
         prompt_text = tracker.accessPromptVersions()
         print(prompt_text)
