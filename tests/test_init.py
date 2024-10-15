@@ -14,8 +14,10 @@ class TestPromptAnalyticsTracker(unittest.TestCase):
         mock_post.return_value = mock_response
 
         # Initialize the tracker with a fake project token
-        tracker = PromptAnalyticsTracker(project_token="fake-project-token")
+        tracker = PromptAnalyticsTracker(project_token="a6f852e77cf6647fb34395d5f579a8f1fe60b5af48bb10a86cbdcdb8b01c6e79")
 
+        prompt_text = tracker.accessPromptVersions()
+        print(prompt_text)
         # Prepare test data
         workflow_name = "test_workflow"
         properties = {

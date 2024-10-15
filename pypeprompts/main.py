@@ -11,6 +11,8 @@ from datetime import datetime
 from .config.config import config
 
 
+
+
 class AnalyticsItem(BaseModel):
     instanceId: str
     promptId: str
@@ -43,6 +45,7 @@ class PromptAnalyticsTracker:
         self.instance_id = str(uuid.uuid4())
         self.project_token = project_token
         self.dashboard_url = config.DEFAULT_DASHBOARD_URL
+        self.prompt_version_url = config.DEFAULT_PROMPT_VERSIONS_URL
         self.enabled = enabled
 
         self.logger = logging.getLogger(__name__)
@@ -213,3 +216,52 @@ class PromptAnalyticsTracker:
             raise PromptAnalyticsError(
                 f"Unexpected error when submitting analytics data asynchronously: {str(e)}"
             )
+            
+    def accessPromptVersions(self, version=None):
+        return asyncio.run(self._async_access_prompt_versions(version))
+
+    async def _async_access_prompt_versions(self, version=None):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.project_token}",
+        }
+        
+        try:
+            self.logger.debug(f"Request URL: {self.prompt_version_url}")
+            self.logger.debug(f"Headers: {json.dumps(headers, indent=2)}")
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(self.prompt_version_url, headers=headers) as response:
+                    response.raise_for_status()  
+                    self.logger.info(f"Prompt versions fetched successfully.")
+                    
+                    response_json = await response.json()  # Await the response
+
+                    if 'promptVersions' in response_json:
+                            result = {item['versionNumber']: item['promptText'] for item in response_json["promptVersions"]}
+                            if version is not None:
+                                version_str = str(version)  
+                                
+                                if version_str in result:
+                                    return result[version_str]
+                                else:
+                                    print(f"Version {version_str} not found.")
+                                    return ""
+                            else:
+                                if result:
+                                    latest_version = max(result.keys(), key=int)  
+                                    return result[latest_version]
+                                else:
+                                    print("No prompt versions found!")
+                                    return ""
+                    else:
+                        print("No projects found!")
+                        return {}
+
+        except aiohttp.ClientError as e:
+            self.logger.error(f"Failed to fetch prompt versions: {e}")
+            raise Exception(f"Failed to fetch prompt versions: {str(e)}")
+
+        except Exception as e:
+            self.logger.error(f"Unexpected error while fetching prompt versions: {e}")
+            raise Exception(f"Unexpected error while fetching prompt versions: {str(e)}")
