@@ -88,6 +88,22 @@ async def async_track():
 asyncio.run(async_track())
 ```
 
+### Access Prompt Versions 
+
+You can use the `accessPromptVersions` method to retrieve prompt versions.
+
+#### Get the Latest Prompt Version
+```python
+prompt_text = tracker.accessPromptVersions()
+print(prompt_text)
+```
+
+#### Get Specific Prompt Version
+```python
+prompt_text = tracker.accessPromptVersions(version=2)
+print(prompt_text)
+```
+
 ## Development Server Usage
 
 When using `pypeprompts` in a development environment:
@@ -123,6 +139,7 @@ This setup allows you to easily switch between development and production enviro
 - Customizable logging
 - Error handling and reporting
 - Development mode for testing without affecting production data
+
 
 ## Configuration
 
