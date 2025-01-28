@@ -38,6 +38,7 @@ class PromptAnalyticsTracker:
         self,
         project_token: str,
         enabled: bool = True,
+        debug: bool = False
     ):
         if not project_token:
             raise PromptAnalyticsError("project_token is required")
@@ -49,13 +50,13 @@ class PromptAnalyticsTracker:
         self.enabled = enabled
 
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
         fh = logging.FileHandler("prompt_analytics.log")
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.DEBUG if debug else logging.INFO)
 
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        ch.setLevel(logging.DEBUG if debug else logging.INFO)
 
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
